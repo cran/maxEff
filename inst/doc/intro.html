@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Additional Predictor with Maximum Effect Size</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Additional Predictor with Maximum Effect
+Size</h1>
+
+
+
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>This vignette of package <strong><code>maxEff</code></strong> (<a href="https://github.com/tingtingzhan/maxEff">Github</a>, <a href="https://rpubs.com/tingtingzhan/maxEff">RPubs</a>) documents three
+methods of selecting one from many <code>numeric</code> predictors for a
+regression model, to ensure that the additional predictor has the
+maximum effect size. The three methods are implemented in functions
+<code>add_num()</code>, <code>add_dummy()</code> and
+<code>add_dummy_partition()</code>.</p>
+<div id="note-to-users" class="section level2">
+<h2>Note to Users</h2>
+<p>Examples in this vignette require that the <code>search</code> path
+has</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(maxEff)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(groupedHyperframe)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">library</span>(survival)</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="fu">library</span>(rpart)</span></code></pre></div>
+<p>Users should remove parameter <code>mc.cores = 1L</code> from all
+examples and use the default option, which engages all CPU cores on the
+current host for macOS. The authors are forced to have
+<code>mc.cores = 1L</code> in this vignette in order to pass
+<code>CRAN</code>’s submission check.</p>
+</div>
+<div id="terms-and-abbreviations" class="section level2">
+<h2>Terms and Abbreviations</h2>
+<table>
+<colgroup>
+<col width="17%" />
+<col width="26%" />
+<col width="55%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Term / Abbreviation</th>
+<th align="left">Description</th>
+<th align="left">Reference</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Forward pipe operator</td>
+<td align="left"><code>?base::pipeOp</code> introduced in <code>R</code>
+4.1.0</td>
+</tr>
+<tr class="even">
+<td align="left"><code>abs</code></td>
+<td align="left">Absolute value</td>
+<td align="left"><code>base::abs</code></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>coxph</code></td>
+<td align="left">Cox model</td>
+<td align="left"><code>survival::coxph</code></td>
+</tr>
+<tr class="even">
+<td align="left"><code>CRAN</code>, <code>R</code></td>
+<td align="left">The Comprehensive R Archive Network</td>
+<td align="left"><a href="https://cran.r-project.org" class="uri">https://cran.r-project.org</a></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>factor</code></td>
+<td align="left">Factor, or categorical variable</td>
+<td align="left"><code>base::factor</code></td>
+</tr>
+<tr class="even">
+<td align="left"><code>function</code></td>
+<td align="left"><code>R</code> function</td>
+<td align="left"><code>base::`function`</code></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>groupedHyperframe</code></td>
+<td align="left">Grouped hyper data frame</td>
+<td align="left"><code>groupedHyperframe::as.groupedHyperframe</code></td>
+</tr>
+<tr class="even">
+<td align="left"><code>head</code></td>
+<td align="left">First parts of an object</td>
+<td align="left"><code>utils::head</code>;
+<code>utils:::head.default</code></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>hypercolumns</code>, <code>hyperframe</code></td>
+<td align="left">(Hyper columns of) hyper data frame</td>
+<td align="left"><code>spatstat.geom::hyperframe</code></td>
+</tr>
+<tr class="even">
+<td align="left"><code>labels</code></td>
+<td align="left">Labels from object</td>
+<td align="left"><code>base::labels</code>;
+<code>maxEff::labels.node1</code></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>levels</code></td>
+<td align="left">Levels of a <code>factor</code></td>
+<td align="left"><code>base::levels</code></td>
+</tr>
+<tr class="even">
+<td align="left"><code>listof</code></td>
+<td align="left">List of objects</td>
+<td align="left"><code>stats::listof</code></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>logistic</code></td>
+<td align="left">Logistic regression model</td>
+<td align="left"><code>stats::glm(., family = binomial(&#39;logit&#39;))</code></td>
+</tr>
+<tr class="even">
+<td align="left"><code>matrix</code></td>
+<td align="left">Matrix</td>
+<td align="left"><code>base::matrix</code></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>partition</code></td>
+<td align="left">Stratified partition</td>
+<td align="left"><code>maxEff::statusPartition</code>,
+<code>caret::createDataPartition</code></td>
+</tr>
+<tr class="even">
+<td align="left"><code>PFS</code></td>
+<td align="left">Progression/recurrence free survival</td>
+<td align="left"><a href="https://en.wikipedia.org/wiki/Progression-free_survival" class="uri">https://en.wikipedia.org/wiki/Progression-free_survival</a></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>predict</code></td>
+<td align="left">Model prediction</td>
+<td align="left"><code>stats::predict</code>;
+<code>maxEff::predict.add_num</code>;
+<code>maxEff::predict.add_dummy</code></td>
+</tr>
+<tr class="even">
+<td align="left"><code>quantile</code></td>
+<td align="left">Quantile</td>
+<td align="left"><code>stats::quantile</code></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>rpart</code></td>
+<td align="left">Recursive partitioning and regression trees</td>
+<td align="left"><code>rpart::rpart</code></td>
+</tr>
+<tr class="even">
+<td align="left"><code>S3</code>, <code>generic</code>,
+<code>methods</code></td>
+<td align="left"><code>S3</code> object oriented system</td>
+<td align="left"><code>base::UseMethod</code>;
+<code>utils::methods</code>; <code>utils::getS3method</code>; <a href="https://adv-r.hadley.nz/s3.html" class="uri">https://adv-r.hadley.nz/s3.html</a></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>sort_by</code></td>
+<td align="left">Sort an object by some criterion</td>
+<td align="left"><code>base::sort_by</code>;
+<code>maxEff::sort_by.add_</code></td>
+</tr>
+<tr class="even">
+<td align="left"><code>subset</code></td>
+<td align="left">Subsets of object by conditions</td>
+<td align="left"><code>base::subset</code>;
+<code>maxEff::subset.add_dummy</code></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>Surv</code></td>
+<td align="left">Survival object</td>
+<td align="left"><code>survival::Surv</code></td>
+</tr>
+<tr class="even">
+<td align="left"><code>update</code></td>
+<td align="left">Update and re-fit a model call</td>
+<td align="left"><code>stats::update</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="acknowledgement" class="section level2">
+<h2>Acknowledgement</h2>
+<p>This work is supported by NCI R01CA222847 (<a href="https://orcid.org/0000-0002-9104-4505">I. Chervoneva</a>, <a href="https://orcid.org/0000-0001-9971-4844">T. Zhan</a>, and <a href="https://orcid.org/0000-0002-8778-261X">H. Rui</a>) and R01CA253977
+(H. Rui and I. Chervoneva).</p>
+</div>
+</div>
+<div id="handy-tools" class="section level1">
+<h1>Handy Tools</h1>
+<div id="node1-dichotomization-via-first-node-of-recursive-partitioning" class="section level2">
+<h2><code>node1()</code>: Dichotomization via First Node of Recursive
+Partitioning</h2>
+<p>Consider the following recursive partitioning and regression
+example,</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">data</span>(cu.summary, <span class="at">package =</span> <span class="st">&#39;rpart&#39;</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>(<span class="at">r =</span> <span class="fu">rpart</span>(Price <span class="sc">~</span> Mileage, <span class="at">data =</span> cu.summary, <span class="at">cp =</span> .Machine<span class="sc">$</span>double.eps, <span class="at">maxdepth =</span> <span class="dv">1</span><span class="dt">L</span>))</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="co">#&gt; n=60 (57 observations deleted due to missingness)</span></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="co">#&gt; node), split, n, deviance, yval</span></span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="co">#&gt;       * denotes terminal node</span></span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a><span class="co">#&gt; 1) root 60 983551500 12615.67  </span></span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a><span class="co">#&gt;   2) Mileage&gt;=24.5 25 206417200  9730.16 *</span></span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a><span class="co">#&gt;   3) Mileage&lt; 24.5 35 420299300 14676.74 *</span></span></code></pre></div>
+<p>Function <code>node1()</code> creates a dichotomizing rule, i.e., a
+<strong><code>function</code></strong>, based on the first node of
+partitioning,</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>(<span class="at">foo =</span> r <span class="sc">|&gt;</span> <span class="fu">node1</span>())</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="co">#&gt; Dichotomizing Rule based on Recursive Partitioning:</span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co">#&gt; function (newx) </span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co">#&gt; {</span></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="co">#&gt;     ret &lt;- (newx &gt;= 24.5)</span></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="co">#&gt;     if (all(ret, na.rm = TRUE) || !any(ret, na.rm = TRUE)) </span></span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="co">#&gt;         warning(&quot;Dichotomized value is all-0 or all-1&quot;)</span></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="co">#&gt;     return(ret)</span></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co">#&gt; }</span></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co">#&gt; &lt;environment: 0x125350040&gt;</span></span></code></pre></div>
+<p>The dichotomizing rule <code>foo</code> converts a
+<code>numeric</code> object to a <code>logical</code> object.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">125</span>); <span class="fu">rnorm</span>(<span class="dv">6</span>, <span class="at">mean =</span> <span class="fl">24.5</span>) <span class="sc">|&gt;</span> <span class="fu">foo</span>()</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="co">#&gt; [1]  TRUE FALSE  TRUE  TRUE  TRUE FALSE</span></span></code></pre></div>
+<p>Developers may obtain the <code>numeric</code> cutoff value of
+<code>foo</code>, or a brief text of to describe <code>foo</code>, for
+further analysis.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>foo <span class="sc">|&gt;</span> <span class="fu">get_cutoff</span>()</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="co">#&gt; [1] 24.5</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>foo <span class="sc">|&gt;</span> <span class="fu">labels</span>()</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="co">#&gt; [1] &quot;&gt;=24.5&quot;</span></span></code></pre></div>
+</div>
+<div id="statuspartition-stratified-partition-by-survival-status" class="section level2">
+<h2><code>statusPartition()</code>: Stratified Partition by Survival
+Status</h2>
+<p>Function <code>statusPartition()</code> performs stratified partition
+based on the survival status of a <code>Surv</code> response, to avoid
+the situation that Cox model is degenerate if all subjects are censored.
+This is a deviation from the very popular function
+<code>caret::createDataPartition()</code>, which stratifies
+<code>Surv</code> response by the <code>quantile</code>s of the survival
+time.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>y <span class="ot">=</span> (survival<span class="sc">::</span>capacitor) <span class="sc">|&gt;</span> </span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  <span class="fu">with</span>(<span class="at">expr =</span> <span class="fu">Surv</span>(time, status))</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">15</span>); id <span class="ot">=</span> y <span class="sc">|&gt;</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>  <span class="fu">statusPartition</span>(<span class="at">times =</span> <span class="dv">1</span><span class="dt">L</span>, <span class="at">p =</span> .<span class="dv">5</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="fu">table</span>(y[id[[<span class="dv">1</span><span class="dt">L</span>]], <span class="dv">2</span><span class="dt">L</span>]) <span class="sc">/</span> <span class="fu">table</span>(y[,<span class="dv">2</span><span class="dt">L</span>]) <span class="co"># balanced by status</span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="co">#&gt;   0   1 </span></span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="co">#&gt; 0.5 0.5</span></span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">15</span>); id0 <span class="ot">=</span> y <span class="sc">|&gt;</span></span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a>  caret<span class="sc">::</span><span class="fu">createDataPartition</span>(<span class="at">times =</span> <span class="dv">1</span><span class="dt">L</span>, <span class="at">p =</span> .<span class="dv">5</span>)</span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a><span class="fu">table</span>(y[id0[[<span class="dv">1</span><span class="dt">L</span>]], <span class="dv">2</span><span class="dt">L</span>]) <span class="sc">/</span> <span class="fu">table</span>(y[,<span class="dv">2</span><span class="dt">L</span>]) <span class="co"># *not* balanced by status</span></span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a><span class="co">#&gt;       0       1 </span></span>
+<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a><span class="co">#&gt; 0.46875 0.56250</span></span></code></pre></div>
+</div>
+</div>
+<div id="data-preparation" class="section level1">
+<h1>Data Preparation</h1>
+<p>Data set <code>Ki67</code> in package
+<strong><code>groupedHyperframe</code></strong> is a
+<code>groupedHyperframe</code>.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">data</span>(Ki67, <span class="at">package =</span> <span class="st">&#39;groupedHyperframe&#39;</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>Ki67</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="co">#&gt; Grouped Hyperframe: ~patientID/tissueID</span></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="co">#&gt; 645 tissueID nested in</span></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="co">#&gt; 622 patientID</span></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="co">#&gt;      logKi67 tissueID Tstage  PFS recfreesurv_mon recurrence adj_rad adj_chemo</span></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="co">#&gt; 1  (numeric) TJUe_I17      2 100+             100          0   FALSE     FALSE</span></span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="co">#&gt; 2  (numeric) TJUe_G17      1   22              22          1   FALSE     FALSE</span></span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a><span class="co">#&gt; 3  (numeric) TJUe_F17      1  99+              99          0   FALSE        NA</span></span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a><span class="co">#&gt; 4  (numeric) TJUe_D17      1  99+              99          0   FALSE      TRUE</span></span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a><span class="co">#&gt; 5  (numeric) TJUe_J18      1  112             112          1    TRUE      TRUE</span></span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a><span class="co">#&gt; 6  (numeric) TJUe_N17      4   12              12          1    TRUE     FALSE</span></span>
+<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a><span class="co">#&gt; 7  (numeric) TJUe_J17      2  64+              64          0   FALSE     FALSE</span></span>
+<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a><span class="co">#&gt; 8  (numeric) TJUe_F19      2  56+              56          0   FALSE     FALSE</span></span>
+<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a><span class="co">#&gt; 9  (numeric) TJUe_P19      2  79+              79          0   FALSE     FALSE</span></span>
+<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a><span class="co">#&gt; 10 (numeric) TJUe_O19      2   26              26          1   FALSE      TRUE</span></span>
+<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a><span class="co">#&gt;    histology  Her2   HR  node  race age patientID</span></span>
+<span id="cb7-20"><a href="#cb7-20" tabindex="-1"></a><span class="co">#&gt; 1          3  TRUE TRUE  TRUE White  66   PT00037</span></span>
+<span id="cb7-21"><a href="#cb7-21" tabindex="-1"></a><span class="co">#&gt; 2          3 FALSE TRUE FALSE Black  42   PT00039</span></span>
+<span id="cb7-22"><a href="#cb7-22" tabindex="-1"></a><span class="co">#&gt; 3          3 FALSE TRUE FALSE White  60   PT00040</span></span>
+<span id="cb7-23"><a href="#cb7-23" tabindex="-1"></a><span class="co">#&gt; 4          3 FALSE TRUE  TRUE White  53   PT00042</span></span>
+<span id="cb7-24"><a href="#cb7-24" tabindex="-1"></a><span class="co">#&gt; 5          3 FALSE TRUE  TRUE White  52   PT00054</span></span>
+<span id="cb7-25"><a href="#cb7-25" tabindex="-1"></a><span class="co">#&gt; 6          2  TRUE TRUE  TRUE Black  51   PT00059</span></span>
+<span id="cb7-26"><a href="#cb7-26" tabindex="-1"></a><span class="co">#&gt; 7          3 FALSE TRUE  TRUE Asian  50   PT00062</span></span>
+<span id="cb7-27"><a href="#cb7-27" tabindex="-1"></a><span class="co">#&gt; 8          2  TRUE TRUE  TRUE White  37   PT00068</span></span>
+<span id="cb7-28"><a href="#cb7-28" tabindex="-1"></a><span class="co">#&gt; 9          3  TRUE TRUE FALSE White  68   PT00082</span></span>
+<span id="cb7-29"><a href="#cb7-29" tabindex="-1"></a><span class="co">#&gt; 10         2  TRUE TRUE FALSE Black  55   PT00084</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>s <span class="ot">=</span> Ki67 <span class="sc">|&gt;</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="fu">aggregate_quantile</span>(<span class="at">by =</span> <span class="sc">~</span> patientID, <span class="at">probs =</span> <span class="fu">seq.int</span>(<span class="at">from =</span> .<span class="dv">01</span>, <span class="at">to =</span> .<span class="dv">99</span>, <span class="at">by =</span> .<span class="dv">01</span>))</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="co">#&gt; Column(s) tissueID removed; as they are not identical per aggregation-group</span></span></code></pre></div>
+<p>Candidate of additional predictors are stored in a
+<code>numeric</code>-<code>hypercolumn</code>
+<em><code>logKi67.quantile</code></em>. Users are encouraged to learn
+more about <code>groupedHyperframe</code> class and function
+<code>aggregate_quantile()</code> from package
+<strong><code>groupedHyperframe</code></strong> <a href="https://rpubs.com/tingtingzhan/groupedHyperframe">vignette</a>.</p>
+<p>Partition into a training (80%) and test (20%) set.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">234</span>); id <span class="ot">=</span> <span class="fu">sample.int</span>(<span class="at">n =</span> <span class="fu">nrow</span>(s), <span class="at">size =</span> <span class="fu">nrow</span>(s)<span class="sc">*</span>.<span class="dv">8</span>) <span class="sc">|&gt;</span> <span class="fu">sort.int</span>()</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>s0 <span class="ot">=</span> s[id, , drop <span class="ot">=</span> <span class="cn">FALSE</span>] <span class="co"># training set</span></span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>s1 <span class="ot">=</span> s[<span class="sc">-</span>id, , drop <span class="ot">=</span> <span class="cn">FALSE</span>] <span class="co"># test set</span></span></code></pre></div>
+<p>Let’s consider a starting model of endpoint <code>PFS</code> with
+predictor <code>Tstage</code> on the training set <code>s0</code>.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">summary</span>(m <span class="ot">&lt;-</span> <span class="fu">coxph</span>(PFS <span class="sc">~</span> Tstage, <span class="at">data =</span> s0))</span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="co">#&gt; Warning in as.data.frame.hyperframe(data, optional = TRUE): 1 variable</span></span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="co">#&gt; discarded in conversion to data frame</span></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="co">#&gt; Warning in as.data.frame.hyperframe(data, optional = TRUE): 1 variable</span></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a><span class="co">#&gt; discarded in conversion to data frame</span></span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a><span class="co">#&gt; Warning in as.data.frame.hyperframe(data): 1 variable discarded in conversion</span></span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="co">#&gt; to data frame</span></span>
+<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a><span class="co">#&gt; Call:</span></span>
+<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a><span class="co">#&gt; coxph(formula = PFS ~ Tstage, data = s0)</span></span>
+<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb10-11"><a href="#cb10-11" tabindex="-1"></a><span class="co">#&gt;   n= 497, number of events= 90 </span></span>
+<span id="cb10-12"><a href="#cb10-12" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb10-13"><a href="#cb10-13" tabindex="-1"></a><span class="co">#&gt;          coef exp(coef) se(coef)     z Pr(&gt;|z|)    </span></span>
+<span id="cb10-14"><a href="#cb10-14" tabindex="-1"></a><span class="co">#&gt; Tstage 0.7162    2.0466   0.1020 7.019 2.23e-12 ***</span></span>
+<span id="cb10-15"><a href="#cb10-15" tabindex="-1"></a><span class="co">#&gt; ---</span></span>
+<span id="cb10-16"><a href="#cb10-16" tabindex="-1"></a><span class="co">#&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</span></span>
+<span id="cb10-17"><a href="#cb10-17" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb10-18"><a href="#cb10-18" tabindex="-1"></a><span class="co">#&gt;        exp(coef) exp(-coef) lower .95 upper .95</span></span>
+<span id="cb10-19"><a href="#cb10-19" tabindex="-1"></a><span class="co">#&gt; Tstage     2.047     0.4886     1.676       2.5</span></span>
+<span id="cb10-20"><a href="#cb10-20" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb10-21"><a href="#cb10-21" tabindex="-1"></a><span class="co">#&gt; Concordance= 0.679  (se = 0.028 )</span></span>
+<span id="cb10-22"><a href="#cb10-22" tabindex="-1"></a><span class="co">#&gt; Likelihood ratio test= 39.61  on 1 df,   p=3e-10</span></span>
+<span id="cb10-23"><a href="#cb10-23" tabindex="-1"></a><span class="co">#&gt; Wald test            = 49.27  on 1 df,   p=2e-12</span></span>
+<span id="cb10-24"><a href="#cb10-24" tabindex="-1"></a><span class="co">#&gt; Score (logrank) test = 54.96  on 1 df,   p=1e-13</span></span></code></pre></div>
+</div>
+<div id="additional-numeric-predictor-with-maximum-effect-size" class="section level1">
+<h1>Additional <code>numeric</code> Predictor with Maximum Effect
+Size</h1>
+<p>Function <code>add_num()</code> treats each additional predictor as a
+<code>numeric</code> variable, and <code>update</code>s the starting
+model with each additional predictor. Function <code>add_num()</code>
+returns an <code>&#39;add_num&#39;</code> object, which is a <code>listof</code>
+objects with an internal class <code>&#39;add_num_&#39;</code>.</p>
+<p>The <code>S3</code> generic <code>sort_by()</code> sorts the
+<code>&#39;add_num&#39;</code> object by the <code>abs</code>olute value of the
+regression coefficient (i.e., effect size) of the additioanal
+<code>numeric</code> predictor.</p>
+<p>The <code>S3</code> generic <code>head()</code> chooses the top
+<code>n</code> element from the object returned from the previous
+step.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">14837</span>); m1 <span class="ot">=</span> m <span class="sc">|&gt;</span></span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>  <span class="fu">add_num</span>(<span class="at">x =</span> <span class="sc">~</span> logKi67.quantile, <span class="at">mc.cores =</span> <span class="dv">1</span><span class="dt">L</span>) <span class="sc">|&gt;</span></span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>  <span class="fu">sort_by</span>(<span class="at">y =</span> <span class="fu">abs</span>(effsize)) <span class="sc">|&gt;</span></span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>  <span class="fu">head</span>(<span class="at">n =</span> <span class="dv">2</span><span class="dt">L</span>)</span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>m1</span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a><span class="co">#&gt; .slice(logKi67.quantile, &quot;0.99&quot;)</span></span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a><span class="co">#&gt; .slice(logKi67.quantile, &quot;0.98&quot;)</span></span></code></pre></div>
+<p>The S3 generic <code>predict()</code> uses model <code>m1</code> on
+the test set <code>s1</code>.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>m1[<span class="dv">1</span><span class="dt">L</span>] <span class="sc">|&gt;</span> <span class="fu">predict</span>(<span class="at">newdata =</span> s1)</span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a><span class="co">#&gt; .slice(logKi67.quantile, &quot;0.99&quot;) :</span></span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a><span class="co">#&gt; Call:</span></span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a><span class="co">#&gt; coxph(formula = PFS ~ Tstage + x., data = newd)</span></span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a><span class="co">#&gt;          coef exp(coef) se(coef)     z      p</span></span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a><span class="co">#&gt; Tstage 0.4068    1.5020   0.2359 1.724 0.0847</span></span>
+<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a><span class="co">#&gt; x.     0.1114    1.1179   0.1926 0.579 0.5629</span></span>
+<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a><span class="co">#&gt; Likelihood ratio test=3.21  on 2 df, p=0.2008</span></span>
+<span id="cb12-11"><a href="#cb12-11" tabindex="-1"></a><span class="co">#&gt; n= 125, number of events= 28</span></span></code></pre></div>
+</div>
+<div id="additional-logical-predictor-with-maximum-effect-size" class="section level1">
+<h1>Additional <code>logical</code> Predictor with Maximum Effect
+Size</h1>
+<div id="add_dummy-naive-practice" class="section level2">
+<h2><code>add_dummy()</code>: Naive Practice</h2>
+<p>Function <code>add_dummy()</code> partitions each additional
+<code>numeric</code> predictor into a <code>logical</code> variable
+using function <code>node1()</code>, and <code>update</code>s the
+starting model by adding in each of the dichotomized
+<code>logical</code> predictor. Function <code>add_dummy()</code>
+returns an <code>&#39;add_dummy&#39;</code> object, which is a
+<code>listof</code> <code>node1</code> objects.</p>
+<p>The <code>S3</code> generic <code>subset()</code> subsets the the
+<code>&#39;add_dummy&#39;</code> object by the balance of partition of the
+additional predictor.</p>
+<p>The <code>S3</code> generic <code>sort_by()</code> sorts the
+<code>&#39;add_dummy&#39;</code> object by the <code>abs</code>olute value of
+regression coefficient (i.e., effect size) of the additional
+<code>logical</code> predictor.</p>
+<p>The <code>S3</code> generic <code>head()</code> chooses the top
+<code>n</code> element from the object returned from the previous
+step.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">14837</span>); m2 <span class="ot">=</span> m <span class="sc">|&gt;</span></span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>  <span class="fu">add_dummy</span>(<span class="at">x =</span> <span class="sc">~</span> logKi67.quantile, <span class="at">mc.cores =</span> <span class="dv">1</span><span class="dt">L</span>) <span class="sc">|&gt;</span></span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>  <span class="fu">subset</span>(<span class="at">subset =</span> p1 <span class="sc">&gt;</span> .<span class="dv">05</span> <span class="sc">&amp;</span> p1 <span class="sc">&lt;</span> .<span class="dv">95</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>  <span class="fu">sort_by</span>(<span class="at">y =</span> <span class="fu">abs</span>(effsize)) <span class="sc">|&gt;</span></span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a>  <span class="fu">head</span>(<span class="at">n =</span> <span class="dv">2</span><span class="dt">L</span>)</span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a>m2</span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a><span class="co">#&gt; .slice(logKi67.quantile, &quot;0.7&quot;)&gt;=6.60981019916946</span></span>
+<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a><span class="co">#&gt; .slice(logKi67.quantile, &quot;0.01&quot;)&gt;=6.02789726883965</span></span></code></pre></div>
+<p>The S3 generic <code>predict()</code> uses model <code>m2</code> on
+the test set <code>s1</code>.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>m2[<span class="dv">1</span><span class="dt">L</span>] <span class="sc">|&gt;</span> <span class="fu">predict</span>(<span class="at">newdata =</span> s1)</span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a><span class="co">#&gt; .slice(logKi67.quantile, &quot;0.7&quot;)&gt;=6.60981019916946 :</span></span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a><span class="co">#&gt; Call:</span></span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a><span class="co">#&gt; coxph(formula = PFS ~ Tstage + x., data = newd)</span></span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a><span class="co">#&gt;          coef exp(coef) se(coef)     z      p</span></span>
+<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a><span class="co">#&gt; Tstage 0.3644    1.4397   0.2402 1.517 0.1292</span></span>
+<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a><span class="co">#&gt; x.TRUE 0.6600    1.9348   0.3841 1.718 0.0857</span></span>
+<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a><span class="co">#&gt; Likelihood ratio test=5.83  on 2 df, p=0.05415</span></span>
+<span id="cb14-11"><a href="#cb14-11" tabindex="-1"></a><span class="co">#&gt; n= 125, number of events= 28</span></span></code></pre></div>
+</div>
+<div id="add_dummy_partition-via-repeated-partitions" class="section level2">
+<h2><code>add_dummy_partition()</code>: via Repeated Partitions</h2>
+<p>Function <code>add_dummy_partition()</code> partitions each
+additional <code>numeric</code> predictor into a <code>logical</code>
+variable in the following steps.</p>
+<ol style="list-style-type: decimal">
+<li>Generate multiple, i.e., repeated, partitions.</li>
+<li>For each partition, create a dichotomizing rule (via function
+<code>node1()</code>) on the training set. Apply this dichotomizing rule
+on the test set and obtain the estimated regression coefficient (i.e.,
+effect size) of the additional <code>logical</code> predictor.</li>
+<li>Among all partitions, select the one with median effect size of the
+additional <code>logical</code> predictor.</li>
+</ol>
+<p>Function <code>add_dummy_partition()</code> also returns an
+<code>&#39;add_dummy&#39;</code> object.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">14837</span>); m3 <span class="ot">=</span> m <span class="sc">|&gt;</span> </span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>  <span class="fu">add_dummy_partition</span>(<span class="sc">~</span> logKi67.quantile, <span class="at">times =</span> <span class="dv">20</span><span class="dt">L</span>, <span class="at">mc.cores =</span> <span class="dv">1</span><span class="dt">L</span>) <span class="sc">|&gt;</span></span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a>  <span class="fu">subset</span>(<span class="at">subset =</span> p1 <span class="sc">&gt;</span> .<span class="dv">15</span> <span class="sc">&amp;</span> p1 <span class="sc">&lt;</span> .<span class="dv">85</span>) <span class="sc">|&gt;</span></span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a>  <span class="fu">sort_by</span>(<span class="at">y =</span> <span class="fu">abs</span>(effsize), <span class="at">decreasing =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a>  <span class="fu">head</span>(<span class="at">n =</span> <span class="dv">2</span><span class="dt">L</span>)</span>
+<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a>m3</span>
+<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a><span class="co">#&gt; .slice(logKi67.quantile, &quot;0.14&quot;)&gt;=6.26711450931504</span></span>
+<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a><span class="co">#&gt; .slice(logKi67.quantile, &quot;0.26&quot;)&gt;=6.38090570405786</span></span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>m3[<span class="dv">1</span><span class="dt">L</span>] <span class="sc">|&gt;</span> <span class="fu">predict</span>(<span class="at">newdata =</span> s1)</span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a><span class="co">#&gt; .slice(logKi67.quantile, &quot;0.14&quot;)&gt;=6.26711450931504 :</span></span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a><span class="co">#&gt; Call:</span></span>
+<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a><span class="co">#&gt; coxph(formula = PFS ~ Tstage + x., data = newd)</span></span>
+<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a><span class="co">#&gt;          coef exp(coef) se(coef)     z      p</span></span>
+<span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a><span class="co">#&gt; Tstage 0.3912    1.4788   0.2348 1.666 0.0956</span></span>
+<span id="cb16-8"><a href="#cb16-8" tabindex="-1"></a><span class="co">#&gt; x.TRUE 0.3783    1.4598   0.3918 0.966 0.3343</span></span>
+<span id="cb16-9"><a href="#cb16-9" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb16-10"><a href="#cb16-10" tabindex="-1"></a><span class="co">#&gt; Likelihood ratio test=3.79  on 2 df, p=0.1505</span></span>
+<span id="cb16-11"><a href="#cb16-11" tabindex="-1"></a><span class="co">#&gt; n= 125, number of events= 28</span></span></code></pre></div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
