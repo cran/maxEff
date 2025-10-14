@@ -1,5 +1,7 @@
 
 #' @importFrom spatstat.geom is.hyperframe
+#' @importFrom groupedHyperframe t.vectorlist
+#' @importFrom stats formula
 .prepare_add_ <- function(start.model, x, data, envir = parent.frame(), ...) {
   
   fom0 <- formula(start.model)
@@ -23,19 +25,22 @@
   
   if (!is.language(x) || is.symbol(x) || x[[1L]] != '~' || length(x) != 2L) stop('`x` must be one-sided formula')
   if (!is.symbol(x. <- x[[2L]])) stop('rhs(x) must be a symbol')
-  X <- data[[x.]]
+  X <- data[[x.]] # 'list'; the hypercolumn
   
   x_ <- X[[1L]] |> 
     names() |> 
     lapply(FUN = \(j) {
-      call(name = '.slice', x., j)
+      call(name = '[', x., j)
     })
-  names(x_) <- vapply(x_, FUN = deparse1, FUN.VALUE = '')
+  
+  xval <- X |> 
+    t.vectorlist()
   
   return(list(
     y = y,
     data = unclass(data)$df,
-    x_ = x_
+    x_ = x_,
+    xval = xval
   ))
   
 }

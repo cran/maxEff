@@ -7,10 +7,12 @@
 #' 
 #' `vignette('intro', package = 'maxEff')`
 #' 
-#' 
 '_PACKAGE'
 
 
+
+# [~~Highlighted strike through test.~~]{style="background-color: #FFFF00"}
+# [Highlighted test.]{style="background-color: #FFFF00"}
 
 
 
