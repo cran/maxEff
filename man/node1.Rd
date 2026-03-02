@@ -14,7 +14,7 @@ node1(object, nm = as.symbol(rownames(s)[1L]), ...)
 \item{...}{additional parameters, currently not in use}
 }
 \value{
-Function \code{\link[=node1]{node1()}} returns an object of class \code{'node1'},
+The function \code{\link[=node1]{node1()}} returns an object of class \code{'node1'},
 which is a \link[base]{function}
 with one parameter \code{newx} taking a \link[base]{double} \link[base]{vector}.
 }
@@ -23,5 +23,17 @@ Dichotomize via 1st Node of Recursive Partitioning
 }
 \note{
 In future \link[base]{integer} and \link[base]{factor} predictors will be supported.
+}
+\examples{
+rpart::rpart(
+ formula = survival::Surv(pgtime, pgstat) ~ age, 
+ data = rpart::stagec[1:135,], 
+ cp = .Machine$double.eps, maxdepth = 2L
+) |>
+ node1()
+
+}
+\references{
+\url{https://tingtingzhan.quarto.pub/groupedhyperframe/object/node1.html}
 }
 \keyword{internal}

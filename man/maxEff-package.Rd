@@ -8,17 +8,12 @@
 \description{
 Methods of selecting one from many numeric predictors for a regression model, to ensure that the additional predictor has the maximum effect size.
 }
-\note{
-Help files of individual functions are intentionally suppressed in this \code{pdf} manual.
-Users are encouraged to get started with
-
-\code{vignette('intro', package = 'maxEff')}
-}
 \seealso{
 Useful links:
 \itemize{
   \item \url{https://github.com/tingtingzhan/maxEff}
   \item \url{https://tingtingzhan.quarto.pub/groupedhyperframe/maxEff.html}
+  \item \url{https://tingtingzhan-groupedhyperframe.netlify.app/maxEff.html}
 }
 
 }
@@ -26,3 +21,4 @@ Useful links:
 \strong{Maintainer}: Tingting Zhan \email{tingtingzhan@gmail.com} (\href{https://orcid.org/0000-0001-9971-4844}{ORCID})
 
 }
+\keyword{internal}
